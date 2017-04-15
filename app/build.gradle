@@ -34,26 +34,27 @@ android {
 }
 
 repositories {
-    maven { url 'https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-core' }
+    //maven { url 'https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-core' }
     //mavenLocal()
-    //mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
     testCompile 'junit:junit:4.12'
-
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'com.qozix:tileview:2.2.6'
-
+    // https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-core
     compile 'org.deeplearning4j:deeplearning4j-core:0.7.2'
-    compile 'org.nd4j:nd4j-native:0.7.2'
-    compile 'org.nd4j:nd4j-native:0.7.2:android-x86'
-    compile 'org.nd4j:nd4j-native:0.7.2:android-arm'
+    //compile 'org.deeplearning4j:deeplearning4j-core:0.7.2'
+    //compile 'org.nd4j:nd4j-native:0.7.2'
+    //compile 'org.nd4j:nd4j-native:0.7.2:android-x86'
+    //compile 'org.nd4j:nd4j-native:0.7.2:android-arm'
+    compile files('libs/deeplearning4j-modelimport-0.8.0.jar')
 }

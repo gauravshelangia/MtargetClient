@@ -4,7 +4,7 @@ import org.deeplearning4j.nn.graph.ComputationGraph;
 import  org.slf4j.Logger;
 import  org.slf4j.LoggerFactory;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
+//import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
 
 
 
@@ -26,7 +26,7 @@ public class ImportKerasModel {
         String modelHdf5Filename = "PATH TO EXPORTED FULL MODEL HDF5 ARCHIVE";
         boolean enforceTrainingConfig = false;
 
-        MultiLayerNetwork model =  Kera
+        MultiLayerNetwork model =  org.deeplearning4j.nn.modelimport.keras.KerasModelImport
         //ComputationGraph model = KerasModelImport.importKerasModelAndWeights(modelJsonFilename, weightsHdf5Filename, enforceTrainingConfig);
 
 
