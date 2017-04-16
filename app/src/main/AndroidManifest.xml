@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Floorto" />
+        <activity android:name=".LocateMe" />
         <activity android:name=".IiiitvFirstFloor" />
         <activity android:name=".IiitvGroundFloor" />
 

@@ -29,7 +29,7 @@ public class IiiitvFirstFloor extends TileViewActivity {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.floor);
+        //setContentView(R.layout.layout_locate);
 
         // multiple references
         final TileView tileView = getTileView();
@@ -126,8 +126,8 @@ public class IiiitvFirstFloor extends TileViewActivity {
 
         // frame the troll
         frameTo(1550, 1550);
-        ((RelativeLayout) findViewById(R.id.groundfloormaplayout)).addView(tileView);
-
+        //((RelativeLayout) findViewById(R.id.groundfloormaplayout)).addView(tileView);
+        setContentView(tileView);
     }
 
 

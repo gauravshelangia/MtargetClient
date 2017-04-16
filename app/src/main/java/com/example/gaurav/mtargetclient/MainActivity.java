@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitvity_main);
 
-        //Intent intent = new Intent(getApplicationContext(),Floorto.class);
+        //Intent intent = new Intent(getApplicationContext(),LocateMe.class);
         //startActivity(intent);
 
         CookieManager cookieManager = new CookieManager();
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sendtoserver.execute();
 
         //Intent intent = new Intent(getApplicationContext(),Starttakingreading.class);
-        Intent intent = new Intent(getApplicationContext(),Floorto.class);
+        Intent intent = new Intent(getApplicationContext(),LocateMe.class);
         startActivity(intent);
 
 
