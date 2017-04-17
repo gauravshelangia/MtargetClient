@@ -5,6 +5,9 @@
     <color name="colorAccent">#FF4081</color>
     <color name="focussed">#41697a</color>
     <color name="pressed">#243e36</color>
+    <color name="greenStart">#a4c639</color>
+    <color name="greenMid">#738b28</color>
+    <color name="greenEnd">#428b28</color>
     <color name="activity">#03A9F4</color>
     <color name="top">@color/colorPrimary</color>
 </resources>
