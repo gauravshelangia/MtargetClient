@@ -2,6 +2,7 @@ package com.example.gaurav.mtargetclient;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,9 @@ import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.deeplearning4j.nn.modelimport.keras.InvalidKerasConfigurationException;
+import org.deeplearning4j.nn.modelimport.keras.UnsupportedKerasConfigurationException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,14 +41,21 @@ public class LocateMe extends AppCompatActivity {
     // on press buttoon open iiitv_ground_floor map
     public void locateme(View view){
         Toast.makeText(this,"inside locateme method",Toast.LENGTH_LONG).show();
-        boolean model_exists = modelexist();
-        if(model_exists){
+        //boolean model_exists = modelexist();
+        //if(model_exists){
             // call modeleval from kerasmodel import class
+
+
+
+                new Task1().execute();
+
+
+
             System.out.println("yes model exists or downloaded the data");
             // set to the
-        }else{
+       // }else{
 
-        }
+        //}
 
 
         //Intent intent = new Intent(getApplicationContext(),IiitvGroundFloor.class);
@@ -189,4 +200,39 @@ public class LocateMe extends AppCompatActivity {
         pb.setProgress(0);
         pb.setProgressDrawable(getResources().getDrawable(R.drawable.green_progress));
     }
+
+    class Task1 extends AsyncTask<Void, Void, String> {
+
+        ImportKerasModel kerasmodel = new ImportKerasModel();
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(Void... arg0)
+        {
+            //Record method
+
+            try {
+                kerasmodel.ModelEval();
+            } catch (UnsupportedKerasConfigurationException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidKerasConfigurationException e) {
+                e.printStackTrace();
+            }
+            return null ;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            super.onPostExecute(result);
+
+        }
+    }
+
+
 }
