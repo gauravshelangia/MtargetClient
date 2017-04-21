@@ -1,12 +1,15 @@
 package com.example.gaurav.mtargetclient;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
@@ -23,8 +26,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
-public class LocateMe extends AppCompatActivity {
+public class LocateMe extends Activity {
 
     int downloadedSize = 0;
     int totalSize = 0;
@@ -46,8 +50,12 @@ public class LocateMe extends AppCompatActivity {
             // call modeleval from kerasmodel import class
 
 
-
-                new Task1().execute();
+                GetRssi getRssi = new GetRssi(getApplicationContext());
+                Pair<ArrayList<Integer>,ArrayList<Integer>> rssivec =  getRssi.getrssivec();
+                ArrayList<Integer> rssi2ghz = rssivec.first;
+                float[] rssi2ghz_float = convettofloat(rssi2ghz);
+                Task1 task1 = new Task1(rssi2ghz_float);
+                task1.execute();
 
 
 
@@ -58,11 +66,7 @@ public class LocateMe extends AppCompatActivity {
         //}
 
 
-        //Intent intent = new Intent(getApplicationContext(),IiitvGroundFloor.class);
-        //startActivity(intent);
 
-        //Intent intent1 = new Intent(getApplicationContext(),IiiitvFirstFloor.class);
-        //startActivity(intent1);
     }
 
     // check if model exist or download if does not exist
@@ -71,11 +75,11 @@ public class LocateMe extends AppCompatActivity {
 
         File dir = new File(Environment.getExternalStorageDirectory(), "/MTarget");
         if (dir.exists()) {
-            File modelfile = null;
+            File modelfile =new File(dir + "MyMultiLayerNetwork.zip") ;
             //System.out.println("modelfile " +modelfile.exists());
-            if (!new File(dir + "mtarget_model_full.h5").isFile()) {
+            if (!modelfile.isFile()) {
                 System.out.print("file doesnot exists creating a new one ");
-                modelfile = new File(dir, "mtarget_model_full.h5");
+                modelfile = new File(dir, "MyMultiLayerNetwork.zip");
                 try {
                     boolean filecreated = modelfile.createNewFile();
                     System.out.println("file created or  not is " + filecreated);
@@ -83,12 +87,12 @@ public class LocateMe extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 final String filepath = "http://ec2-35-154-36-86.ap-south-1.compute.amazonaws.com/" +
-                        "MTarget_Server/mtarget_model_full.h5";
+                        "MTarget_Server/MyMultiLayerNetwork.zip";
                 showProgress(filepath);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        downloadfile(filepath, "mtarget_model_full.h5");
+                        downloadfile(filepath, "MyMultiLayerNetwork.zip");
                     }
                 }).start();
 
@@ -97,10 +101,11 @@ public class LocateMe extends AppCompatActivity {
             }
         } else {
             dir.mkdir();
-            File modelfile = null;
-            if (!new File(dir + "mtarget_model_full.h5").isFile()) {
+            File modelfile =new File(dir + "MyMultiLayerNetwork.zip") ;
+            //System.out.println("modelfile " +modelfile.exists());
+            if (!modelfile.isFile()) {
                 System.out.print("file doesnot exists creating a new one ");
-                modelfile = new File(dir, "mtarget_model_full.h5");
+                modelfile = new File(dir, "MyMultiLayerNetwork.zip");
                 try {
                     boolean filecreated = modelfile.createNewFile();
                     System.out.println("file created or  not is " + filecreated);
@@ -108,13 +113,12 @@ public class LocateMe extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 final String filepath = "http://ec2-35-154-36-86.ap-south-1.compute.amazonaws.com/" +
-                        "MTarget_Server/mtarget_model_full.h5";
+                        "MTarget_Server/MyMultiLayerNetwork.zip";
                 showProgress(filepath);
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        downloadfile(filepath, "mtarget_model_full.h5");
+                        downloadfile(filepath, "MyMultiLayerNetwork.zip");
                     }
                 }).start();
 
@@ -127,7 +131,7 @@ public class LocateMe extends AppCompatActivity {
 
     // download file
     void downloadfile(String filelink, String file){
-        System.out.print("download unction called\n");
+        System.out.print("download function called\n");
         String filepath = filelink;
         try {
 
@@ -201,8 +205,13 @@ public class LocateMe extends AppCompatActivity {
         pb.setProgressDrawable(getResources().getDrawable(R.drawable.green_progress));
     }
 
+    // async task to compute the tile number from rssivector
     class Task1 extends AsyncTask<Void, Void, String> {
-
+        float[] rssi2ghz;
+        public Task1(float[] rssi2ghz){
+            super();
+            this.rssi2ghz = rssi2ghz;
+        }
         ImportKerasModel kerasmodel = new ImportKerasModel();
         @Override
         protected void onPreExecute()
@@ -215,7 +224,22 @@ public class LocateMe extends AppCompatActivity {
             //Record method
 
             try {
-                kerasmodel.ModelEval();
+                int tile_number = kerasmodel.ModelEval(rssi2ghz);
+                System.out.println("Yes it is after the kerasmodel.ModelEval" + tile_number);
+
+                // go to ground floor map
+                if (tile_number<=624){
+                    Intent intent = new Intent(getApplicationContext(),IiitvGroundFloor.class);
+                    intent.putExtra("tile_number" , tile_number);
+                    startActivity(intent);
+                }
+                // go to first floor map
+                if (tile_number>624){
+                    Intent intent1 = new Intent(getApplicationContext(),IiiitvFirstFloor.class);
+                    intent1.putExtra("tile_number" , tile_number-624);
+                    startActivity(intent1);
+                }
+
             } catch (UnsupportedKerasConfigurationException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -234,5 +258,12 @@ public class LocateMe extends AppCompatActivity {
         }
     }
 
-
+    public float[] convettofloat(ArrayList<Integer> array){
+        float[] farray = new float[array.size()];
+        int size = array.size();
+        for (int i=0;i<size;i++){
+            farray[i] = (float) array.get(i);
+        }
+        return farray;
+    }
 }

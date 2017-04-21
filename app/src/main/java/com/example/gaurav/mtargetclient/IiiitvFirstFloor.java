@@ -1,6 +1,8 @@
 package com.example.gaurav.mtargetclient;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +22,7 @@ public class IiiitvFirstFloor extends TileViewActivity {
     double tilewidth;
     double tileheight;
     View markerview;
-    int no_row;
+    int no_row,no_col=0;
     public View markerviewleft, markerviewright, markerviewup, markerviewdown;
     int tileactual = -1, tileleft = -1, tileright = -1, tileup = -1, tiledown = -1;
     private EditText editText;
@@ -30,6 +32,8 @@ public class IiiitvFirstFloor extends TileViewActivity {
 
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.layout_locate);
+        Intent mintent = getIntent();
+        int tile_number = mintent.getIntExtra("tile_number",800);
 
         // multiple references
         final TileView tileView = getTileView();
@@ -53,41 +57,6 @@ public class IiiitvFirstFloor extends TileViewActivity {
 
         // lets center all markers both horizontally and vertically
         tileView.setMarkerAnchorPoints(-0.5f, -0.5f);
-
-        // set touchevent listener
-        tileView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                v = (TileView) v;
-                CoordinateTranslater coordinateTranslater = ((TileView) v).getCoordinateTranslater();
-                double x = v.getScrollX() + event.getX();
-                double y = v.getScrollY() + event.getY();
-                System.out.println("coordinate : " + x + " y :" + y);
-
-                double cx = coordinateTranslater.translateAndScaleAbsoluteToRelativeX((float) x, ((TileView) v).getScale());
-                double cy = coordinateTranslater.translateAndScaleAbsoluteToRelativeY((float) y, ((TileView) v).getScale());
-                //System.out.println("coordinate relaticve : " + cx + " y :" + cy);
-                //System.out.println("tile is : " + gettileindex(cx, cy, tilewidth, tileheight).first);
-
-                /*)
-                //remove all previous marker
-                ((TileView) v).removeMarker(markerview);
-                ((TileView) v).removeMarker(markerviewleft);
-                ((TileView) v).removeMarker(markerviewright);
-                ((TileView) v).removeMarker(markerviewup);
-                ((TileView) v).removeMarker(markerviewdown);
-                */
-
-                // place all the marker
-                placeMarker(R.drawable.reds, cx, cy);
-                placeMarkeronleft(v, R.drawable.green, cx, cy);
-                placeMarkeronright(v, R.drawable.green, cx, cy);
-                placeMarkerondown(v, R.drawable.green, cx, cy);
-                placeMarkeronup(v, R.drawable.green, cx, cy);
-
-                return false;
-            }
-        });
 
 /*
         // set markerTap listener
@@ -123,111 +92,42 @@ public class IiiitvFirstFloor extends TileViewActivity {
         tilewidth = detailLevel.getTileWidth();
         tileheight = detailLevel.getTileHeight();
         no_row = (int) Math.ceil (tileView.getBaseHeight() / tileheight);
+        no_col = (int) Math.ceil(tileView.getBaseWidth()/tilewidth);
+        System.out.println("col and row is " + no_col + "  " + no_row);
 
-        // frame the troll
-        frameTo(1550, 1550);
+        placeMarker(R.drawable.reds, tile_number);
         //((RelativeLayout) findViewById(R.id.groundfloormaplayout)).addView(tileView);
         setContentView(tileView);
+
     }
 
-
-    private void placeMarker(int resId, double x, double y) {
+    private void placeMarker(int resId, int tile_number) {
         ImageView imageView = new ImageView(this);
         MarkerLayout.LayoutParams params = new MarkerLayout.LayoutParams((int)(tilewidth*getTileView().getScale())-10, (int)(tileheight*getTileView().getScale())-10);
         imageView.setLayoutParams(params);
         imageView.setImageResource(resId);
-        Pair<Integer, Integer> tilenum = gettileindex(x, y, tilewidth, tileheight);
 
-        //coordinate of left tile
+        Pair<Integer, Integer> tilenum = gettileindex(tile_number);
+        System.out.println("tile is " +tilenum.first + "  : " +tilenum.second);
+        //coordinate of  tile
         double xon = tilewidth * tilenum.first - tilewidth / 2;
         double yon = tileheight * tilenum.second - tileheight / 2;
+        System.out.println("tile coordinate : " + xon + "  " + yon);
 
-        tileactual = gettilenumber(gettileindex(x,y,tilewidth,tileheight));
+        // frame the troll
+        frameTo(xon, yon);
         markerview = getTileView().addMarker(imageView, xon, yon, null, null);
     }
 
-
-    private void placeMarkeronleft(View v, int resId, double x, double y) {
-        //((TileView) v).removeMarker(markerviewleft);
-        ImageView imageView = new ImageView(this);
-        MarkerLayout.LayoutParams params = new MarkerLayout.LayoutParams((int)(tilewidth*getTileView().getScale())-10, (int)(tileheight*getTileView().getScale())-10);
-        imageView.setLayoutParams(params);
-        imageView.setImageResource(resId);
-        Pair<Integer, Integer> tilenum = gettileindex(x, y, tilewidth, tileheight);
-
-        //coordinate of left tile
-        double xleft = tilewidth * tilenum.first - 3 * tilewidth / 2;
-        double yleft = tileheight * tilenum.second - tileheight / 2;
-        Pair<Integer, Integer> tilenum1 = gettileindex(xleft, yleft, tilewidth, tileheight);
-
-        tileleft = gettilenumber(tilenum1);
-        markerviewleft = getTileView().addMarker(imageView, xleft, yleft, null, null);
-    }
-
-    private void placeMarkeronright(View v, int resId, double x, double y) {
-       // ((TileView) v).removeMarker(markerviewright);
-        ImageView imageView = new ImageView(this);
-        MarkerLayout.LayoutParams params = new MarkerLayout.LayoutParams((int)(tilewidth*getTileView().getScale())-10, (int)(tileheight*getTileView().getScale())-10);
-        imageView.setLayoutParams(params);
-        imageView.setImageResource(resId);
-        Pair<Integer, Integer> tilenum = gettileindex(x, y, tilewidth, tileheight);
-        //coordinate of right tile
-        double xright = tilewidth * tilenum.first + tilewidth / 2;
-        double yright = tileheight * tilenum.second - tileheight / 2;
-        Pair<Integer, Integer> tilenum1 = gettileindex(xright, yright, tilewidth, tileheight);
-        tileright = gettilenumber(tilenum1);
-        markerviewright = getTileView().addMarker(imageView, xright, yright, null, null);
-    }
-
-    private void placeMarkeronup(View v, int resId, double x, double y) {
-       // ((TileView) v).removeMarker(markerviewup);
-        ImageView imageView = new ImageView(this);
-        MarkerLayout.LayoutParams params = new MarkerLayout.LayoutParams((int)(tilewidth*getTileView().getScale())-10, (int)(tileheight*getTileView().getScale())-10);
-        imageView.setLayoutParams(params);
-        imageView.setImageResource(resId);
-        Pair<Integer, Integer> tilenum = gettileindex(x, y, tilewidth, tileheight);
-        //coordinate of upper tile
-        double xup = tilewidth * tilenum.first - tilewidth / 2;
-        double yup = tileheight * tilenum.second - 3 * tileheight / 2;
-        Pair<Integer, Integer> tilenum1 = gettileindex(xup, yup, tilewidth, tileheight);
-        tileup = gettilenumber(tilenum1);
-
-        markerviewright = getTileView().addMarker(imageView, xup, yup, null, null);
-    }
-
-    private void placeMarkerondown(View v, int resId, double x, double y) {
-        //((TileView) v).removeMarker(markerviewdown);
-        ImageView imageView = new ImageView(this);
-        MarkerLayout.LayoutParams params = new MarkerLayout.LayoutParams((int)(tilewidth*getTileView().getScale())-10, (int)(tileheight*getTileView().getScale())-10);
-        imageView.setLayoutParams(params);
-        imageView.setImageResource(resId);
-        Pair<Integer, Integer> tilenum = gettileindex(x, y, tilewidth, tileheight);
-        //coordinate of down tile
-        double xdown = tilewidth * tilenum.first - tilewidth / 2;
-        double ydown = tileheight * tilenum.second + tileheight / 2;
-
-        Pair<Integer, Integer> tilenum1 = gettileindex(xdown, ydown, tilewidth, tileheight);
-        tiledown = gettilenumber(tilenum1);
-
-        markerviewright = getTileView().addMarker(imageView, xdown, ydown, null, null);
-    }
-
-
-    private Pair<Integer, Integer> gettileindex(double x, double y, double tilewidth, double tileheight) {
-        String tile;
-        int X = (int) Math.ceil(x / tilewidth);
-        int Y = (int) Math.ceil(y / tileheight);
+    // get tile index as col and row number
+    private Pair<Integer, Integer> gettileindex(int tile_number) {
+        int Y = (int) Math.ceil((float)tile_number/no_col);
+        System.out.println("ceuk  : "+Y+ " : tile number is " +tile_number+" float division" + (float)tile_number/no_col);
+        int X = tile_number%no_col;
+        if (X==0)
+            X=no_col;
         Pair<Integer, Integer> tile_no = new Pair<>(X, Y);
         return tile_no;
-    }
-
-    // get tile number as unique id to store in database
-    public int gettilenumber(Pair<Integer, Integer> tileindex) {
-        int tilenum = 0;
-        //System.out.println("tile index"+tileindex.first +", " +tileindex.second+"number of row" + no_row);
-        //624 number of tiles on ground floor
-        tilenum = 624 + (tileindex.second - 1) * no_row + tileindex.first;
-        return tilenum;
     }
 
 }
