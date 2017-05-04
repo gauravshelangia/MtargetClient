@@ -2,12 +2,10 @@ package com.example.gaurav.mtargetclient;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -15,9 +13,6 @@ import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.deeplearning4j.nn.modelimport.keras.InvalidKerasConfigurationException;
-import org.deeplearning4j.nn.modelimport.keras.UnsupportedKerasConfigurationException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class LocateMe extends Activity {
 
@@ -45,8 +41,9 @@ public class LocateMe extends Activity {
     // on press buttoon open iiitv_ground_floor map
     public void locateme(View view){
         Toast.makeText(this,"inside locateme method",Toast.LENGTH_LONG).show();
-        //boolean model_exists = modelexist();
-        //if(model_exists){
+        boolean model_exists = modelexist();
+        System.out.println("Model exists " +model_exists);
+        if(model_exists){
             // call modeleval from kerasmodel import class
 
 
@@ -61,11 +58,12 @@ public class LocateMe extends Activity {
 
             System.out.println("yes model exists or downloaded the data");
             // set to the
-       // }else{
-
-        //}
-
-
+       }
+       else{
+            System.out.println("inside else loop");
+            String modellink = "http://ec2-35-154-36-86.ap-south-1.compute.amazonaws.com/neuralmodel/MyMultiLayerNetwork.zip";
+            downloadfile(modellink,"MyMultiLayerNetwork.zip");
+       }
 
     }
 
@@ -77,54 +75,12 @@ public class LocateMe extends Activity {
         if (dir.exists()) {
             File modelfile =new File(dir + "MyMultiLayerNetwork.zip") ;
             //System.out.println("modelfile " +modelfile.exists());
-            if (!modelfile.isFile()) {
-                System.out.print("file doesnot exists creating a new one ");
-                modelfile = new File(dir, "MyMultiLayerNetwork.zip");
-                try {
-                    boolean filecreated = modelfile.createNewFile();
-                    System.out.println("file created or  not is " + filecreated);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                final String filepath = "http://ec2-35-154-36-86.ap-south-1.compute.amazonaws.com/" +
-                        "MTarget_Server/MyMultiLayerNetwork.zip";
-                showProgress(filepath);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        downloadfile(filepath, "MyMultiLayerNetwork.zip");
-                    }
-                }).start();
-
-                Log.d("yes model exist", "yes");
+            if (modelfile.isFile()) {
                 exist = true;
             }
         } else {
             dir.mkdir();
-            File modelfile =new File(dir + "MyMultiLayerNetwork.zip") ;
-            //System.out.println("modelfile " +modelfile.exists());
-            if (!modelfile.isFile()) {
-                System.out.print("file doesnot exists creating a new one ");
-                modelfile = new File(dir, "MyMultiLayerNetwork.zip");
-                try {
-                    boolean filecreated = modelfile.createNewFile();
-                    System.out.println("file created or  not is " + filecreated);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                final String filepath = "http://ec2-35-154-36-86.ap-south-1.compute.amazonaws.com/" +
-                        "MTarget_Server/MyMultiLayerNetwork.zip";
-                showProgress(filepath);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        downloadfile(filepath, "MyMultiLayerNetwork.zip");
-                    }
-                }).start();
-
-                Log.d("yes model exist", "yes");
-                exist = true;
-            }
+            exist = false;
         }
         return exist;
     }
@@ -240,11 +196,7 @@ public class LocateMe extends Activity {
                     startActivity(intent1);
                 }
 
-            } catch (UnsupportedKerasConfigurationException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidKerasConfigurationException e) {
+            }  catch (IOException e) {
                 e.printStackTrace();
             }
             return null ;

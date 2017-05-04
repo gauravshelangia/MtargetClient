@@ -1,6 +1,7 @@
 package com.example.gaurav.mtargetclient;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -29,11 +30,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText edittextuserid,edittextusername;
     Button sendtoserver;
     String macaddr,devicemodel,deviceman,devtype;
+    static public Context appcontext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitvity_main);
-
+        appcontext = getApplicationContext();
         //Intent intent = new Intent(getApplicationContext(),LocateMe.class);
         //startActivity(intent);
 

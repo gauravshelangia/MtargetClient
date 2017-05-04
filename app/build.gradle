@@ -25,9 +25,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
-        ndk {
-            abiFilters "armeabi-v7a", "x86", "armeabi", "mips", "armeabi-v8a"
-        }
+        //ndk {
+        //    abiFilters "armeabi-v7a", "x86", "armeabi", "mips", "armeabi-v8a"
+        //}
     }
     buildTypes {
         release {
@@ -40,7 +40,7 @@ android {
 repositories {
     //maven { url 'https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-core' }
     //mavenLocal()
-    mavenCentral()
+    //mavenCentral()
 }
 
 dependencies {
@@ -51,7 +51,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
     testCompile 'junit:junit:4.12'
-    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    //compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'com.qozix:tileview:2.2.6'
     // https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-core
     compile 'org.deeplearning4j:deeplearning4j-core:0.7.2'
@@ -59,9 +59,9 @@ dependencies {
     compile 'org.nd4j:nd4j-native:0.7.2'
     compile 'org.nd4j:nd4j-native:0.7.2:android-x86'
     compile 'org.nd4j:nd4j-native:0.7.2:android-arm'
-    compile 'com.android.support:multidex:1.0.1'
-    compile files('libs/deeplearning4j-modelimport-0.8.0.jar')
-    compile files('libs/hdf5-1.10.0-patch1-1.3.jar')
+    //compile 'com.android.support:multidex:1.0.1'
+    ///compile files('libs/deeplearning4j-modelimport-0.8.0.jar')
+    //compile files('libs/hdf5-1.10.0-patch1-1.3.jar')
     //compile files('libs/hdf5-1.10.0-patch1-1.3-linux-ppc64le.jar')
     //compile files('libs/nio-10.6.jar')
     //compile files('libs/jpathwatch-0.94.jar')
